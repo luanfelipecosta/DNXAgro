@@ -6,7 +6,7 @@ export default styled.View({
   // alignSelf: 'stretch',
   backgroundColor: Colors.White,
   alignItems: 'center',
-  justifyContent: 'center',
+  // justifyContent: 'center',
   paddingHorizontal: 16,
   paddingVertical: 32,
   borderRadius: 10,

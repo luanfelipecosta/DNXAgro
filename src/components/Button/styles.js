@@ -17,7 +17,7 @@ export const StyledButton = styled.TouchableOpacity.attrs({
 export const ButtonText = styled.Text({
   ...material.subheading,
   color: Colors.White,
-  fontWeight: 900,
+  fontWeight: 700,
 });
 
 export const Loader = styled.ActivityIndicator.attrs({
