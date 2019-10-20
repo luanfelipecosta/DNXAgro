@@ -13,7 +13,7 @@ export const AvoidingKeyboardWrapper = styled(KeyboardAwareScrollView).attrs({
 });
 
 export const StyledLogo = styled(Logo)({
-  height: 80,
+  height: 35,
   marginVertical: 30,
   alignSelf: 'center',
 });

@@ -47,7 +47,10 @@ const withFormController = withFormik({
       const {data} = await LoginService(values);
       await AsyncStorage.setItem('@loginform:usuario', values.usuario);
       navigate('Scan', {
-        data,
+        data: {
+          ...data,
+          usuario: values.usuario,
+        },
       });
     } catch (e) {
       // login failed
@@ -63,10 +66,10 @@ const withFormController = withFormik({
         null,
         {cancelable: true},
       );
-      setFieldValue('senha', undefined, true);
       console.log(e);
     }
     setSubmitting(false);
+    setFieldValue('senha', undefined, true);
   },
 });
 

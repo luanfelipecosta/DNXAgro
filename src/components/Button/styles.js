@@ -5,7 +5,7 @@ import {material} from 'react-native-typography';
 export const StyledButton = styled.TouchableOpacity.attrs({
   activeOpacity: 0.9,
 })(({disabled}) => ({
-  backgroundColor: disabled ? Colors.PrimaryDisabled : Colors.Primary,
+  backgroundColor: disabled ? Colors.Gray : Colors.Primary,
   alignSelf: 'center',
   justifyContent: 'center',
   alignItems: 'center',
