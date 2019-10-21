@@ -1,5 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-// import {Linking} from 'react-native';
 import {Field} from 'formik';
 import {
   AvoidingKeyboardWrapper,
@@ -33,16 +33,7 @@ export default function Scan(props) {
     values,
   } = props;
 
-  if (cameraOpen) {
-    return (
-      <CodeScanner
-        closeCamera={() => toggleCamera(false)}
-        onBarCodeScanned={onBarCodeScanned}
-      />
-    );
-  }
-
-  const handleOperation = operation => {
+  const _handleOperation = operation => {
     setOperation(operation);
     handleSubmit();
   };
@@ -53,10 +44,64 @@ export default function Scan(props) {
       <Button text="PERMITIR USO" onPress={requestPermission} />
     </>
   );
+  const renderContent = () => (
+    <>
+      <Title>{QRCode ? `CX-${QRCode}` : 'Bem Vindo'}</Title>
+      {QRCode ? (
+        <>
+          <FakeQR />
+          <Field
+            returnKeyType="done"
+            autoCapitalize="none"
+            name="valor"
+            label="Peso"
+            component={TextInput}
+          />
 
-  const renderCardTitle = () => (
-    <Title>{QRCode ? `CX-${QRCode}` : 'Bem Vindo'}</Title>
+          <Button
+            disabled={!values.valor}
+            loading={isSubmitting}
+            text="COLETAR"
+            onPress={() => _handleOperation('coletar')}
+          />
+          <Button
+            loading={isSubmitting}
+            text="ASPIRAR"
+            style={{marginTop: 32}}
+            onPress={() => _handleOperation('aspirar')}
+          />
+          <Button
+            loading={isSubmitting}
+            text="CONSULTAR"
+            style={{marginTop: 16}}
+            onPress={() => _handleOperation('consultar')}
+          />
+        </>
+      ) : (
+        <Description>
+          Comece escaneando um QRCode para ver as opções.
+        </Description>
+      )}
+
+      <Button
+        style={{
+          marginTop: 48,
+          backgroundColor: !QRCode ? Colors.Primary : Colors.Red,
+        }}
+        text={QRCode ? 'LIMPAR' : 'ESCANEAR QR CODE'}
+        onPress={() => toggleCamera(true)}
+      />
+    </>
   );
+
+  if (cameraOpen) {
+    return (
+      <CodeScanner
+        closeCamera={() => toggleCamera(false)}
+        onBarCodeScanned={onBarCodeScanned}
+      />
+    );
+  }
 
   return (
     <AvoidingKeyboardWrapper>
@@ -67,52 +112,7 @@ export default function Scan(props) {
         </ExitButton>
       </Row>
       <Card>
-        {!hasCameraPermissions && renderLackOfPermission()}
-        {renderCardTitle()}
-        {QRCode ? (
-          <>
-            <FakeQR />
-            <Field
-              returnKeyType="done"
-              autoCapitalize="none"
-              name="valor"
-              label="Peso"
-              component={TextInput}
-            />
-
-            <Button
-              disabled={!values.valor}
-              loading={isSubmitting}
-              text="COLETAR"
-              onPress={() => handleOperation('coletar')}
-            />
-            <Button
-              loading={isSubmitting}
-              text="ASPIRAR"
-              style={{marginTop: 32}}
-              onPress={() => handleOperation('aspirar')}
-            />
-            <Button
-              loading={isSubmitting}
-              text="CONSULTAR"
-              style={{marginTop: 16}}
-              onPress={() => handleOperation('consultar')}
-            />
-          </>
-        ) : (
-          <Description>
-            Comece escaneando um QRCode para ver as opções.
-          </Description>
-        )}
-
-        <Button
-          style={{
-            marginTop: 48,
-            backgroundColor: !QRCode ? Colors.Primary : Colors.Red,
-          }}
-          text={QRCode ? 'LIMPAR' : 'ESCANEAR QR CODE'}
-          onPress={() => toggleCamera(true)}
-        />
+        {hasCameraPermissions ? renderContent() : renderLackOfPermission()}
       </Card>
     </AvoidingKeyboardWrapper>
   );

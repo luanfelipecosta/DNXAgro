@@ -4,7 +4,7 @@ export const Colors = {
   Red: '#e61010',
   White: '#fff',
   Smoke: '#f9f9f9',
-  Gray: '#A4A4A4',
+  Gray: '#807d7d',
   Black: '#000',
 };
 

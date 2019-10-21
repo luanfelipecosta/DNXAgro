@@ -120,13 +120,13 @@ const withCollectHandlers = withFormik({
     }
 
     const url = operation === 'aspirar' ? urlAspirar : urlColetar;
-
+    const parsedValor = String(values.valor).replace(',', '.');
     try {
       await axios.put(`${url}/?id=${QRCode}`, {
         usuario,
         token,
         id: QRCode,
-        valor: operation === 'coletar' ? values.valor : undefined,
+        valor: operation === 'coletar' ? Number(parsedValor) : undefined,
       });
 
       alert('Operação conclúida com sucesso!');
