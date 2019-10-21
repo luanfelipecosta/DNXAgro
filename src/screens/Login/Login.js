@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text} from 'react-native';
+
 import {Field} from 'formik';
 import {AvoidingKeyboardWrapper, StyledLogo} from './styles';
 import Card from '../../components/Card';
@@ -11,7 +11,6 @@ export default function Login(props) {
 
   return (
     <AvoidingKeyboardWrapper>
-      {/* <Text>{JSON.stringify(props, null, 2)}</Text> */}
       <StyledLogo />
       <Card>
         <Field
@@ -33,8 +32,6 @@ export default function Login(props) {
 
         <Button loading={isSubmitting} text="ENTRAR" onPress={handleSubmit} />
       </Card>
-
-      {/* <Text>{JSON.stringify(props, null, 2)}</Text> */}
     </AvoidingKeyboardWrapper>
   );
 }

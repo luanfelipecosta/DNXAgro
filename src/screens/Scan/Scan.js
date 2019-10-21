@@ -1,5 +1,5 @@
 import React from 'react';
-// import {Text} from 'react-native';
+// import {Linking} from 'react-native';
 import {Field} from 'formik';
 import {
   AvoidingKeyboardWrapper,
@@ -47,6 +47,17 @@ export default function Scan(props) {
     handleSubmit();
   };
 
+  const renderLackOfPermission = () => (
+    <>
+      <PermissionWarning />
+      <Button text="PERMITIR USO" onPress={requestPermission} />
+    </>
+  );
+
+  const renderCardTitle = () => (
+    <Title>{QRCode ? `CX-${QRCode}` : 'Bem Vindo'}</Title>
+  );
+
   return (
     <AvoidingKeyboardWrapper>
       <Row>
@@ -56,14 +67,8 @@ export default function Scan(props) {
         </ExitButton>
       </Row>
       <Card>
-        {/* Lack of permission */}
-        {!hasCameraPermissions && (
-          <>
-            <PermissionWarning />
-            <Button text="PERMITIR USO" onPress={requestPermission} />
-          </>
-        )}
-        <Title>{QRCode ? `CX-${QRCode}` : 'Bem Vindo'}</Title>
+        {!hasCameraPermissions && renderLackOfPermission()}
+        {renderCardTitle()}
         {QRCode ? (
           <>
             <FakeQR />
@@ -84,8 +89,14 @@ export default function Scan(props) {
             <Button
               loading={isSubmitting}
               text="ASPIRAR"
-              style={{marginVertical: 32}}
+              style={{marginTop: 32}}
               onPress={() => handleOperation('aspirar')}
+            />
+            <Button
+              loading={isSubmitting}
+              text="CONSULTAR"
+              style={{marginTop: 16}}
+              onPress={() => handleOperation('consultar')}
             />
           </>
         ) : (

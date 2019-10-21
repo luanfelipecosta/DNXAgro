@@ -1,6 +1,7 @@
+/* eslint-disable no-alert */
 import {compose, lifecycle, withState, withHandlers} from 'recompose';
 import {RESULTS} from 'react-native-permissions';
-import {Alert} from 'react-native';
+import {Alert, Linking} from 'react-native';
 import {withFormik} from 'formik';
 import axios from 'axios';
 import Scan from './Scan';
@@ -15,15 +16,17 @@ const withPermissionState = withState(
   'setCameraPermissions',
   false,
 );
-
-const withSelectedOperation = withState('operation', 'setOperation', false);
-
-const withCameraOpenState = withState('cameraOpen', 'toggleCamera', null);
-
 const withQRCodeState = withState('QRCode', 'setQRCode', null);
+const withCameraOpenState = withState('cameraOpen', 'toggleCamera', null);
+const withSelectedOperationState = withState(
+  'operation',
+  'setOperation',
+  false,
+);
 
 const withRequestPermissionHandler = withHandlers({
-  requestPermission: ({setCameraPermissions}) => async () => {
+  requestPermission: props => async () => {
+    const {setCameraPermissions} = props;
     const requestedPermission = await requestCameraPermission();
     if (requestedPermission === RESULTS.GRANTED) {
       setCameraPermissions(true);
@@ -31,7 +34,7 @@ const withRequestPermissionHandler = withHandlers({
   },
 });
 
-const withCameraPermissionFlow = lifecycle({
+const initScreenWithPermissions = lifecycle({
   async componentDidMount() {
     const {setCameraPermissions, requestPermission} = this.props;
 
@@ -64,10 +67,13 @@ const withScannerHandler = withHandlers({
       return;
     }
 
-    const [pre, id] = data.split('cx-');
-    setQRCode(id);
+    setQRCode(data.split('cx-')[0]);
   },
-  exit: ({navigation: {navigate}}) => () => {
+  exit: props => () => {
+    const {
+      navigation: {navigate},
+    } = props;
+
     Alert.alert('Sair', 'Deseja mesmo sair?', [
       {
         onPress: () => navigate('Login'),
@@ -92,7 +98,7 @@ const withCollectHandlers = withFormik({
           navigate,
           state: {
             params: {
-              data: {urlAspirar, urlColetar, token, usuario},
+              data: {urlAspirar, urlColetar, urlConsultar, token, usuario},
             },
           },
         },
@@ -100,12 +106,23 @@ const withCollectHandlers = withFormik({
       setSubmitting,
       setFieldValue,
     } = formikBag;
-
+    // toggle button loadings;
     setSubmitting(true);
+
+    if (operation === 'coletar') {
+      try {
+        await Linking.openURL(`${urlConsultar}/?id=${QRCode}`);
+      } catch (e) {
+        alert('Erro ao abrir o link de coleta');
+        console.log(`⚠️ erro ao abrir o link ${JSON.stringify(e, null, 2)}`);
+      }
+      return;
+    }
+
     const url = operation === 'aspirar' ? urlAspirar : urlColetar;
 
     try {
-      const res = await axios.put(`${url}/?id=${QRCode}`, {
+      await axios.put(`${url}/?id=${QRCode}`, {
         usuario,
         token,
         id: QRCode,
@@ -134,11 +151,11 @@ const withCollectHandlers = withFormik({
 
 const EnhancedScreen = compose(
   withCameraOpenState,
-  withSelectedOperation,
+  withSelectedOperationState,
   withQRCodeState,
   withPermissionState,
   withRequestPermissionHandler,
-  withCameraPermissionFlow,
+  initScreenWithPermissions,
   withScannerHandler,
   withCollectHandlers,
 )(Scan);
