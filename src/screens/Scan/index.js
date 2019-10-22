@@ -50,8 +50,6 @@ const initScreenWithPermissions = lifecycle({
     } catch (e) {
       console.log('⚠️ Failed to request permissions.');
     }
-
-    // has no permissions
   },
 });
 
@@ -67,7 +65,9 @@ const withScannerHandler = withHandlers({
       return;
     }
 
-    setQRCode(data.split('cx-')[0]);
+    const QRCode = data.split('cx-')[1];
+
+    setQRCode(QRCode);
   },
   exit: props => () => {
     const {
@@ -109,13 +109,14 @@ const withCollectHandlers = withFormik({
     // toggle button loadings;
     setSubmitting(true);
 
-    if (operation === 'coletar') {
+    if (operation === 'consultar') {
       try {
         await Linking.openURL(`${urlConsultar}/?id=${QRCode}`);
       } catch (e) {
         alert('Erro ao abrir o link de coleta');
         console.log(`⚠️ erro ao abrir o link ${JSON.stringify(e, null, 2)}`);
       }
+      setSubmitting(false);
       return;
     }
 
@@ -132,7 +133,7 @@ const withCollectHandlers = withFormik({
       alert('Operação conclúida com sucesso!');
     } catch (error) {
       const {
-        response: {status},
+        response: {status, data},
       } = error;
 
       if (status === 401) {
@@ -141,7 +142,8 @@ const withCollectHandlers = withFormik({
         return;
       }
       alert(
-        `Falha ao ${operation} o item "CX-${QRCode}". Tente novamente mais tarde, se o erro persistir contate um administrador `,
+        `Falha ao ${operation} o item "CX-${QRCode}". ${data ||
+          'Tente novamente mais tarde, se o erro persistir contate um administrador'} `,
       );
     }
     setSubmitting(false);

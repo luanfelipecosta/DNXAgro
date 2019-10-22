@@ -44,6 +44,7 @@ export default function Scan(props) {
       <Button text="PERMITIR USO" onPress={requestPermission} />
     </>
   );
+
   const renderContent = () => (
     <>
       <Title>{QRCode ? `CX-${QRCode}` : 'Bem Vindo'}</Title>

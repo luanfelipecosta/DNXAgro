@@ -8,5 +8,4 @@ import LOGO from '../../../assets/logo.png';
 export default styled.Image.attrs({
   source: LOGO,
   resizeMode: 'contain',
-
 })({});
